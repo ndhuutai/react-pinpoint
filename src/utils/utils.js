@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 let changes = [];
 function getCircularReplacer() {
   const seen = new WeakSet();
@@ -26,7 +27,7 @@ function mountToReactRoot(reactRoot) {
   // Reset changes
   changes = [];
   // Lift parent of react fibers tree
-  const parent = root._reactRootContainer._internalRoot;
+  const parent = reactRoot._reactRootContainer._internalRoot;
   // Add listener to react fibers tree so changes can be recorded
   recordChangesToObjField(parent, 'current');
   // Reassign react fibers tree to record initial state
@@ -35,8 +36,14 @@ function mountToReactRoot(reactRoot) {
 const getRenders = () => changes.map((change) => JSON.parse(change));
 
 function traverseWith(fiber, callback) {
-  fiber.child && traverseWith(fiber.child, callback);
-  fiber.sibling && traverseWith(fiber.sibling, callback);
+  if (fiber.child) {
+    callback(fiber.child);
+    traverseWith(fiber.child, callback);
+  }
+  if (fiber.sibling) {
+    callback(fiber.sibling);
+    traverseWith(fiber.sibling, callback);
+  }
 }
 
 module.exports = { mountToReactRoot, getRenders, traverseWith };
