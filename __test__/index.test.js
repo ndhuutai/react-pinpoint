@@ -17,7 +17,7 @@ function Link(props) {
 describe('getAllSlowComponentRenders function', () => {
   it('should get the slow component renders', () => {
     const testRenderer = TestRenderer.create(<Link page="https://www.facebook.com/">Facebook</Link>);
-    testRenderer.root._fiber.selfBaseDuration = 15; // fake render time in milisecs
+    testRenderer.root._fiber.selfBaseDuration = 15; // fake render time in milliseconds
     const testFiberArray = [JSON.stringify(testRenderer.root._fiber, getCircularReplacer())];
 
     expect(getAllSlowComponentRenders(14, testFiberArray)).toHaveLength(1);
