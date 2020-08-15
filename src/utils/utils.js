@@ -50,30 +50,30 @@ function mountToReactRoot(reactRoot) {
   return changes;
 }
 
-function traverseWith(fiber, callback) {
-  callback(fiber);
-  if (fiber.child) {
-    traverseWith(fiber.child, callback);
+  function traverseWith(fiber, callback) {
+    callback(fiber);
+    if (fiber.child) {
+      traverseWith(fiber.child, callback);
+    }
+    if (fiber.sibling) {
+      traverseWith(fiber.sibling, callback);
+    }
   }
-  if (fiber.sibling) {
-    traverseWith(fiber.sibling, callback);
+
+  function flattenTree(tree) {
+    // Closured array for storing fibers
+    const arr = [];
+    // Closured callback for adding to arr
+    const callback = (fiber) => {
+      arr.push(fiber);
+    };
+    traverseWith(tree, callback);
+    return arr;
   }
-}
 
-function flattenTree(tree) {
-  // Closured array for storing fibers
-  const arr = [];
-  // Closured callback for adding to arr
-  const callback = (fiber) => {
-    arr.push(fiber);
-  };
-  traverseWith(tree, callback);
-  return arr;
-}
-
-function checkTime(fiber, threshold) {
-  return fiber.selfBaseDuration > threshold;
-}
+  function checkTime(fiber, threshold) {
+    return fiber.selfBaseDuration > threshold;
+  }
 
 /**
  *
