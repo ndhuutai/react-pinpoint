@@ -179,7 +179,6 @@ class Tree {
       this.uniqueId++;
 
       fiberMap.set(id, fiberNode);
-
       processedFibers.set(uniquePart, id);
     } else {
       id = processedFibers.get(uniquePart);
