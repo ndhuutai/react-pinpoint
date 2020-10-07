@@ -38,6 +38,8 @@ class TreeNode {
     this.tag = tag;
     this.updateList = [];
     this.children = [];
+    this.parent = null;
+    this.stateNode = stateNode;
 
     if (tag === 0 && !stateNode && memoizedState) {
       // pass in "queue" obj to spy on dispatch func
