@@ -127,6 +127,16 @@ class Tree {
       componentList,
     };
   }
+
+  // stretch feature, possible todo but needs extensive testing.
+  setStateOfRender() {
+    this.componentList.forEach(component => {
+      if (component.tag === 1 && component.memoizedState) {
+        console.log(component.stateNode);
+        component.stateNode.setState({...component.memoizedState});
+      }
+    });
+  }
 }
 
 export default Tree;
