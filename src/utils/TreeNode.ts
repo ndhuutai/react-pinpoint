@@ -18,6 +18,7 @@ class TreeNode {
     state: any;
     updater: any;
     tag: number;
+    setState: any;
   };
   parent: any;
   child: any;
