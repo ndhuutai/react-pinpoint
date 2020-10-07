@@ -144,8 +144,42 @@ function getElementName(fiber) {
   }
 }
 
-function serializeMemoizedProps(obj) {
-  console.log('to be done');
+function serializeMemoizedProps(obj): any {
+  if (!obj) return null;
+
+  // list of props to omit from the resulting object in return statement
+  const omitList = ['props', '_owner', '_store', '_sef', '_source', '_self'];
+
+  let newObj = null;
+  // loop through each prop to check if they exist on omitList
+  // if yes then skip, no then include in the object being returned;
+  if (Array.isArray(obj)) {
+    if (!newObj) newObj = [];
+    for (let i = 0; i < obj.length; i++) {
+      const nestedChild = {};
+      for (const key of Object.getOwnPropertyNames(obj[i])) {
+        if (omitList.indexOf(key) < 0) {
+          nestedChild[key] = obj[i][key];
+        }
+      }
+      newObj.push(nestedChild);
+    }
+  } else {
+    for (const key of Object.getOwnPropertyNames(obj)) {
+      if (omitList.indexOf(key) < 0) {
+        if (!newObj) newObj = {};
+        if (typeof obj[key] === 'object') {
+          newObj[key] = serializeMemoizedProps(obj[key]);
+        } else if (typeof obj[key] === 'symbol') {
+          newObj[key] = obj[key].toString();
+        } else {
+          newObj[key] = obj[key];
+        }
+      }
+    }
+  }
+
+  return newObj;
 }
 
 export default TreeNode;
