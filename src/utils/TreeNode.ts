@@ -1,3 +1,6 @@
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-case-declarations */
+
 class TreeNode {
   // will add type after ;D
   uID: any;
@@ -11,12 +14,11 @@ class TreeNode {
   updateQueue: any;
   tag: any;
   updateList: any[];
-  stateNode:
-    | {
-        state: any;
-        updater: any;
-      }
-    | string;
+  stateNode: {
+    state: any;
+    updater: any;
+    tag: number;
+  };
   parent: any;
   child: any;
   sibling: any;
@@ -37,36 +39,6 @@ class TreeNode {
     this.updateList = [];
     this.children = [];
 
-    // stateNode can contain circular references depends on the fiber node
-    if (tag === 5) {
-      this.stateNode = 'host component';
-    } else if (tag === 3) {
-      this.stateNode = 'host root';
-    } else {
-      this.stateNode = stateNode;
-    }
-
-    // check the fiber and the attach the spy
-    // find a way to store the update function variable and result here
-    // if ((tag === 1 || tag === 5) && this.stateNode && this.stateNode.state) {
-    //   /*
-    //     enqueueReplaceState (inst, payload, callback)
-    //     enqueueForceUpdate (inst, callback)
-    //     enqueueSetState    (inst, payload, callback)
-    //   */
-    //   if (this.stateNode.updater) {
-    //     const cb = (update, payload) => {
-    //       this.updateList.push([update, payload]);
-    //     };
-    //     // spying
-    //     // if (!stateNodeWeakSet.has(this.stateNode)) {
-    //     //   stateNodeWeakSet.add(this.stateNode);
-    //     //   Spy(this.stateNode.updater, "enqueueSetState", cb);
-    //     //   Spy(this.stateNode.updater, "enqueueReplaceState", cb);
-    //     //   Spy(this.stateNode.updater, "enqueueForceUpdate", cb);
-    //     // }
-    //   }
-    // }
     if (tag === 0 && !stateNode && memoizedState) {
       // pass in "queue" obj to spy on dispatch func
       console.log('attaching a spy', memoizedState.queue);
@@ -94,19 +66,60 @@ class TreeNode {
 
   toSerializable(): any {
     const newObj = {};
-    const omitList = ['memoizedProps', 'memoizedState', 'updateList', 'updateQueue', 'ref', 'elementType', 'stateNode'];
+    const omitList = [
+      // "memoizedProps", // currently working on serialization for this
+      // "memoizedState", // and this as well
+      'updateList',
+      'updateQueue',
+      'ref',
+      'elementType',
+      // "stateNode", // serialization needed for this?
+    ];
     // transform each nested node to just ids where appropriate
-    const keys = Object.keys(this);
-    for (const key in keys) {
+    for (const key of Object.getOwnPropertyNames(this)) {
       if (omitList.indexOf(key) < 0) {
         switch (key) {
           case 'parent':
-          case 'sibling':
-          case 'child':
-            newObj[`${key}ID`] = this[key].uID;
+            newObj['parent_component_id'] = this[key] ? this[key].uID : this[key];
             break;
-          case 'children': // sorry for this monstrosity, :D
-            newObj[`childrenIDs`] = this[key].map(treeNode => treeNode.uID);
+          case 'sibling':
+            newObj['sibling_component_id'] = this[key].uID;
+            break;
+          case 'selfBaseDuration':
+            newObj['self_base_duration'] = this[key];
+            break;
+          case 'child': // probably not needed anymore, this prop seems to be redundant
+            // newObj[`${key}ID`] = this[key].uID;
+            break;
+          case 'children':
+            newObj[`children_ids`] = this[key].map(treeNode => treeNode.uID);
+            break;
+          case 'memoizedState':
+            newObj['component_state'] = this[key];
+            break;
+          case 'memoizedProps':
+            if (this[key]) {
+              newObj['component_props'] = this[key].hasOwnProperty('children') ? serializeMemoizedProps(this[key]) : this[key];
+            } else {
+              newObj['component_props'] = this[key];
+            }
+            // newObj["component_props"] = this[key];
+            break;
+          case 'uID':
+            newObj['component_id'] = this[key];
+            break;
+          case 'stateNode':
+            let value = null;
+            if (this[key]) {
+              if (this[key].tag === 5) {
+                value = 'host component';
+              } else if (this[key].tag === 3) {
+                value = 'host root';
+              } else {
+                value = 'other type';
+              }
+            }
+            newObj['state_node'] = value;
             break;
           default:
             newObj[key] = this[key];
@@ -129,6 +142,10 @@ function getElementName(fiber) {
     default:
       return `${fiber.elementType}`;
   }
+}
+
+function serializeMemoizedProps(obj) {
+  console.log('to be done');
 }
 
 export default TreeNode;
