@@ -1,6 +1,6 @@
 {
   "name": "react-pinpoint",
-  "version": "0.0.1-beta.7",
+  "version": "1.0.0",
   "description": "YEAH",
   "main": "./lib/bundle.main.js",
   "scripts": {
@@ -23,6 +23,9 @@
   "bugs": {
     "url": "https://github.com/oslabs-beta/react-pinpoint/issues"
   },
+  "keywords": [
+    "react-fiber"
+  ],
   "homepage": "https://github.com/oslabs-beta/react-pinpoint#readme",
   "devDependencies": {
     "@babel/cli": "^7.10.5",
