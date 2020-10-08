@@ -11,7 +11,7 @@ async function record(page, url, rootIdString) {
   // Load url and inject code to page
   await page.goto(url);
   await page.addScriptTag({
-    path: path.join(__dirname, 'utils.js'),
+    path: path.join(__dirname, '../lib/bundle.puppeteer.js'),
   });
 
   // Start recording changes
@@ -23,17 +23,18 @@ async function record(page, url, rootIdString) {
   return page;
 }
 
-// async function report(page, threshold = 0) {
-//   // Return results of local state that exceeds threshold
-//   const slowRenders = await page.evaluate(async threshold => {
-//     return getAllSlowComponentRenders(threshold);
-//   }, threshold);
+async function report(page, threshold = 0) {
+  // Return results of local state that exceeds threshold
+  const slowRenders = await page.evaluate(async threshold => {
+    const result = getAllSlowComponentRenders(changes, threshold);
+    return result;
+  }, threshold);
 
-//   return slowRenders;
-// }
+  return JSON.parse(slowRenders);
+}
 
 async function reportAll() {
   // Return global state
 }
 
-export {record, reportAll};
+export {record, reportAll, mountToReactRoot, getAllSlowComponentRenders};
