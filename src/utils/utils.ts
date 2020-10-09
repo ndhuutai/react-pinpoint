@@ -198,7 +198,7 @@ async function sendData(changes, projectID) {
   const data = scrubCircularReferences(changes);
 
   console.log(data);
-  const request = await fetch(`http://localhost:5000/api/commit/${projectID}`, {
+  const request = await fetch(`https://react-pinpoint-api.herokuapp.com/api/commit/${projectID}`, {
     method: 'POST',
     mode: 'cors',
     credentials: 'include',
