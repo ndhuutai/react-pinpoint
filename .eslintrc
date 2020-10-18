@@ -7,7 +7,7 @@
     }
   },
   "ignorePatterns": "./lib/**",
-  "extends": ["eslint:recommended", "eslint-config-prettier", "plugin:react/recommended"],
+  "extends": ["eslint:recommended", "eslint-config-prettier"],
   "rules": {
     "strict": ["error", "never"]
   },
