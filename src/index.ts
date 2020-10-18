@@ -1,5 +1,3 @@
-/* eslint-disable ban-ts-comment */
-
 import * as path from 'path';
 import ReactPP from './utils/utils';
 // const path = require('path');
